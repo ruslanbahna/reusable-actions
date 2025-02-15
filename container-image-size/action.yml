@@ -10,7 +10,8 @@ inputs:
 runs: 
   using: "composite"
   steps:
-    - run: |
+    - shell: bash
+      run: |
         echo "### Container Image Sizes" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         docker pull ${{ inputs.base-image}}
