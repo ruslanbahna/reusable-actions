@@ -27,7 +27,7 @@ jobs:
       run: docker pull ghcr.io/ruslanbahna/hardened-images/hardened-node:photon-5.0.17
 
     - name: test image size
-      uses: ruslanbahna/reusable-actions/container-image-size@v0.0.1
+      uses: ruslanbahna/reusable-actions/container-image-size@v1
       with: 
         built-image: docker pull ghcr.io/ruslanbahna/hardened-images/hardened-node:photon-5.0.17
         base-image: ubuntu:latest
