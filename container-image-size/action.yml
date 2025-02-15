@@ -19,4 +19,3 @@ runs:
         image_size=$(docker inspect -f "{{ .Size }}" ${{ inputs.built-image }} | numfmt --to=si --suffix=B)
         echo "Uncompressed container image size for base image ${{ inputs.built-image}} is $image-size." >> $GITHUB_STEP_SUMMARY
       shell: bash
-
