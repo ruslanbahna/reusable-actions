@@ -1,0 +1,61 @@
+{
+    "[jsonc]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+    },
+    "cSpell.flagWords": [
+        // Some typos don't get flagged. Add them to the spell-checker dictionary here"
+        "brach",
+    ],
+    "cSpell.words": [
+        // Add custom words to the spell-checker dictionary here",
+        "assumeyes",
+        "distro",
+        "distros",
+        "Dpkg",
+        "dumpversion",
+        "elif",
+        "excludedocs",
+        "GNUPGHOME",
+        "ltra",
+        "microdnf",
+        "nodes",
+        "noninteractive",
+        "NorthernTrust",
+        "repopgcheck",
+        "setopt",
+        "tdnf"
+    ],
+    "editor.formatOnSave": true,
+    "editor.guides.bracketPairs": "active",
+    "editor.renderWhitespace": "all",
+    "editor.wordWrap": "on",
+    "files.associations": {
+        "extensions.json": "jsonc",
+        "settings.json": "jsonc"
+    },
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "*.json"
+            ],
+            "schema": {
+                "allowTrailingCommas": true
+            }
+        }
+    ],
+    "markdown.validate.enabled": true,
+    "markdown.validate.fileLinks.enabled": "error",
+    "markdown.validate.fragmentLinks.enabled": "error",
+    "markdownlint.config": {
+        "MD024": {
+            "allow_different_nesting": true
+        },
+        "MD025": {
+            "front_matter_title": ""
+        },
+        "MD028": false
+    }
+}
