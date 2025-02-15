@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "bierner.emojisense",
+        "bierner.markdown-emoji",
+        "bierner.markdown-mermaid",
+        "blackmist.LinkCheckMD",
+        "DavidAnson.vscode-markdownlint",
+        "eamodio.gitlens",
+        "streetsidesoftware.code-spell-ckecker",
+    ],
+}
