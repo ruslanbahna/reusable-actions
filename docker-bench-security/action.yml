@@ -22,16 +22,16 @@ runs:
      # Narrowing benchmark to just check the container image rules against the image we just built.
     # See: https://github.com/docker/docker-bench-security#docker-bench-for-security-options
       run: |
-        ./docker-bench-security.sh --container-images --if ${{ inputs.image-name }} > ./log/docker-bench-security.log
-        total_checks=$(jq '.total_checks' ./log/docker-bench-security.log.json)
+        ./docker-bench-security.sh --container-images -i ${{ inputs.image-name }}
+        total_checks=$(jq '.checks' ./log/docker-bench-security.log.json)
         current_score=$(jq '.score' ./log/docker-bench-security.log.json)
 
         echo "total_checks=$total_checks" >> $GITHUB_OUTPUT
         echo "current_score=$current_score" >> $GITHUB_OUTPUT
 
         echo "## Docker Benchmark for Security" >> $GITHUB_STEP_SUMMARY
-        echo "- Checks: $total_checks" >> $GITHUB_STEP_SUMMARY
-        echo "- Score: $current_score" >> $GITHUB_STEP_SUMMARY
+        echo "Checks: $total_checks." >> $GITHUB_STEP_SUMMARY
+        echo "Score: $current_score" >> $GITHUB_STEP_SUMMARY
       shell: bash
 
     - name: Fail if Docker Benchmark did not make checks
