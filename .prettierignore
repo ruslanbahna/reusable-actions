@@ -1,0 +1,3 @@
+LICENCE.md
+# Cannot use prettier with GitHub actions, since both single and double quotes are valid syntax depending on use
+.github/*/*.yml
