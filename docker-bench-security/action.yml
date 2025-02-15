@@ -22,7 +22,7 @@ runs:
      # Narrowing benchmark to just check the container image rules against the image we just built.
     # See: https://github.com/docker/docker-bench-security#docker-bench-for-security-options
       run: |
-        ./docker-bench-security.sh --container-images -i ${{ inputs.image-name }}
+        ./docker-bench-security.sh  -c container-images -i ${{ inputs.image-name }}
         total_checks=$(jq '.checks' ./log/docker-bench-security.log.json)
         current_score=$(jq '.score' ./log/docker-bench-security.log.json)
 
