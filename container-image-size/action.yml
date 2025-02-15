@@ -20,7 +20,7 @@
 #         echo "Uncompressed container image size for base image ${{ inputs.built-image}} is $image-size." >> $GITHUB_STEP_SUMMARY
 #       shell: bash
 name: Print uncompressed container image size
-description: GitHub Container Registry does not support showing image size, will add them to the summary
+description: GitHub Container Registry does not support showing image size, will add them to the summary.
 
 inputs:
   built-image:
@@ -37,11 +37,23 @@ runs:
         echo "### Container Image Sizes" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
 
-        docker pull ${{ inputs.base-image }}
+        echo "🛠️ Pulling base image: ${{ inputs.base-image }}"
+        if ! docker pull ${{ inputs.base-image }}; then
+          echo "❌ ERROR: Base image ${{ inputs.base-image }} could not be pulled." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+        echo "🛠️ Pulling built image: ${{ inputs.built-image }}"
+        if ! docker pull ${{ inputs.built-image }}; then
+          echo "❌ ERROR: Built image ${{ inputs.built-image }} could not be pulled." >> $GITHUB_STEP_SUMMARY
+          exit 1
+        fi
+
+        echo "✅ Successfully pulled both images."
 
         base_size=$(docker inspect -f "{{ .Size }}" ${{ inputs.base-image }} | numfmt --to=si --suffix=B)
-        echo "Uncompressed container image size for base image ${{ inputs.base-image }} is $base_size." >> $GITHUB_STEP_SUMMARY
-
         built_size=$(docker inspect -f "{{ .Size }}" ${{ inputs.built-image }} | numfmt --to=si --suffix=B)
-        echo "Uncompressed container image size for built image ${{ inputs.built-image }} is $built_size." >> $GITHUB_STEP_SUMMARY
-      shell: bash
+
+        echo "📦 Uncompressed container image size for base image ${{ inputs.base-image }}: $base_size." >> $GITHUB_STEP_SUMMARY
+        echo "📦
+
