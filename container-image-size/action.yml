@@ -1,0 +1,4 @@
+name: Print uncompressed container image size
+description: GitHub Container Regisrty does not support showing image size, will add them to the summary
+inputs:
+  
