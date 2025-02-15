@@ -23,4 +23,13 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v4
 
+    - name: pull image
+      run: docker pull ghcr.io/ruslanbahna/hardened-images/hardened-node:photon-5.0.17
+
+    - name: test image size
+      uses: ruslanbahna/reusable-actions/container-image-size@v0.0.1
+      wtth: 
+        built-image: docker pull ghcr.io/ruslanbahna/hardened-images/hardened-node:photon-5.0.17
+        base-image: ubuntu:latest
+
 
