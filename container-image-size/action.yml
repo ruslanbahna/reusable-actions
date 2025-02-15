@@ -16,6 +16,6 @@ runs:
         echo "" >> $GITHUB_STEP_SUMMARY
         docker pull ${{ inputs.base-image}}
         image_size=$(docker inspect -f "{{ .Size }}" ${{ inputs.base-image }} | numfmt --to=si --suffix=B)
-        echo "Uncompressed container image size for base image ${{ inputs.base-image}} is $image-size." >> $GITHUB_STEP_SUMMARY
+        echo "Uncompressed container image size for base image ${{ inputs.base-image}} is $image_size." >> $GITHUB_STEP_SUMMARY
         image_size=$(docker inspect -f "{{ .Size }}" ${{ inputs.built-image }} | numfmt --to=si --suffix=B)
-        echo "Uncompressed container image size for base image ${{ inputs.built-image}} is $image-size." >> $GITHUB_STEP_SUMMARY
+        echo "Uncompressed container image size for base image ${{ inputs.built-image}} is $image_size." >> $GITHUB_STEP_SUMMARY
