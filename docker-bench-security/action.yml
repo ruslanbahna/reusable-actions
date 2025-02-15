@@ -1,0 +1,51 @@
+name: Docker’s implementation of CIS Docker Benchmarks
+description: Assumes you have built or pulled an image into Docker for security benchmarking.  
+             For more information, see https://github.com/docker/docker-bench-security
+
+inputs:
+  image-name:
+    description: The name of the docker image, without the label. Assumption is that you have  already built or pulled the image.
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download Docker-Bench-for-Security
+      uses: actions/checkout@v3
+      with:
+        repository: docker/docker-bench-security
+        path: docker-bench-security
+
+    - name: Run Docker Benchmark for Security
+      id: run-docker-benchmark
+      working-directory: ./docker-bench-security
+     # Narrowing benchmark to just check the container image rules against the image we just built.
+    # See: https://github.com/docker/docker-bench-security#docker-bench-for-security-options
+      run: |
+        ./docker-bench-security.sh --container-images --if ${{ inputs.image-name }} > ./log/docker-bench-security.log
+        total_checks=$(jq '.total_checks' ./log/docker-bench-security.log.json)
+        current_score=$(jq '.score' ./log/docker-bench-security.log.json)
+
+        echo "total_checks=$total_checks" >> $GITHUB_OUTPUT
+        echo "current_score=$current_score" >> $GITHUB_OUTPUT
+
+        echo "## Docker Benchmark for Security" >> $GITHUB_STEP_SUMMARY
+        echo "- Checks: $total_checks" >> $GITHUB_STEP_SUMMARY
+        echo "- Score: $current_score" >> $GITHUB_STEP_SUMMARY
+      shell: bash
+
+    - name: Fail if Docker Benchmark did not make checks
+      if: ${{ steps.run-docker-benchmark.outputs.total_checks == 0 }}
+      run: |
+        echo "Docker Benchmark did not appear to make any checks. Verify that the parameters used with docker-bench-security.sh are correct."
+        exit 1
+      shell: bash
+
+    - name: Fail if Docker Benchmark score is too low
+      if: ${{ steps.run-docker-benchmark.outputs.current_score < 0 }}
+      run: |
+        echo "Docker Benchmark for Security has scored negative: ${{ steps.run-docker-benchmark.outputs.current_score }}."
+        echo "Raise the score to at least 0."
+        echo "For hints on how to raise your score, see: https://github.com/northerntrust/apm0005367-eep-container-images/blob/main/CIS%20Docker%20Benchmark%20v1.5.0%202020PDF.pdf"
+        exit 1
+      shell: bash
