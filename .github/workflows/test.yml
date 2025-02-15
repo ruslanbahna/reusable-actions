@@ -17,12 +17,8 @@ jobs:
   test-container-image-size:
     runs-on: ubuntu-latest
     steps:
-    - name: Log into Container Registry
-      uses: docker/login-action@v3
-      with:
-        regisrty: ghcr.io/ruslanbahna
-        username: ${{github.repository_owner}}
-        password: ${{secrets.GHCR_TOKEN}}
+    - name: Log in to Container Registry
+      run: docker login ghcr.io --username ${{ github.repository_owner }} --password ${{ secrets.GHCR_TOKEN }}
       
     - name: Check out code
       uses: actions/checkout@v4
