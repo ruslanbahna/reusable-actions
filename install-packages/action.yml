@@ -1,0 +1,62 @@
+name: Install Packages
+description: Uses the distro’s package manager to install packages. Supports Debian, Ubuntu, RHEL, Photon, CBL-Mariner, and derived OSes. For Alpine, install bash first.
+author: Ruslan Bahna
+branding:
+  icon: package
+  color: blue
+inputs:
+  packages:
+    description: "Space-delimited list of packages to install"
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Check for Linux
+      if: ${{ runner.os != 'Linux' }}
+      uses: actions/github-script@v6
+      with:
+        script: core.setFailed('This action only supports Linux operating systems.')
+
+    - name: Check for Bash
+      run: |
+        echo "Checking if bash exists. If you are running Alpine and do not have bash, run: apk add bash"
+        bash --version
+      shell: bash
+
+    - run: |
+        if [ -x "$(command -v apt-get)" ]; then
+          # Ubuntu and Debian package manager. Replaced dpkg as default.
+          apt-get update
+          # For explanation of unusual switches, see: https://askubuntu.com/questions/258190/how-to-make-apt-get-install-less-noisy
+          # -q: quiet, -y: assume yes, --no-install-recommends: skip unnecessary packages.
+          DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --quiet --yes -o=Dpkg::Use-Pty=0 ${{inputs.packages}}
+        elif [ -x "$(command -v apk)" ]; then
+          # Alpine package manager.
+          apk update
+          apk add ${{inputs.packages}}
+        elif [ -x "$(command -v tdnf)" ]; then
+          # CBL-Mariner and Photon package manager. Stripped-down version of dnf.
+          currentVersion="$(tdnf --version)"
+          requiredVesion="3.5.0"
+          # Explanation of if statement: https://unix.stackexchange.com/questions/285924/how-to-compare-a-programs-version-in-a-shell-script
+          # If tdnf's version is not supported, but it is supported as a fork, fallback to dnf.
+          if [ "$(printf '%s/n' "$requiredVersion" | sort -V | head -n1)" = "$requiredVersion" ]; then
+            # --nodocs argumentis not supported, but it is supported as aflag
+            tdnf --setopt=tsflags=nodocs --assumeyes install -y ${inputs.packages}
+          else
+            tdnf --assumeyes install ${inputs.packages}
+          fi
+        elif [ -x "$(command -v microdnf)" ]; then
+          # RHEL minimal package manager. Stripped-down version of dnf.
+          microdnf --setopt=install_weak-deps=0 --nodocs --assumeyes install ${inputs.packages}
+        elif [ -x "$(command -v dnf)" ]; then
+          # RHEL and Fedora package manager. Replaced yum and rpm as default.
+          dnf --setopt=install_weak_deps=false --nodocs --assumeyes install ${inputs.packages}
+        elif [ -x "$(command -v rpm)" ]; then
+          # Fallback package manager. Superseded by more modern package managers.
+          rpm --install --excludedocs ${inputs.packages}
+        else
+          echo "This distro's package manager is not currently supported"
+          exit 1
+        fi
+      shell: bash
