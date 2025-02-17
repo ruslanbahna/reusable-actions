@@ -21,7 +21,7 @@ runs:
       run: |
         echo "Checking if bash exists. If you are running Alpine and do not have bash, run: apk add bash"
         bash --version
-      shell: bash
+      shell: sh
 
     - run: |
         if [ -x "$(command -v apt-get)" ]; then
