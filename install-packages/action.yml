@@ -27,9 +27,8 @@ runs:
         if [ -x "$(command -v apt-get)" ]; then
           # Ubuntu and Debian package manager. Replaced dpkg as default.
           apt-get update
-          # For explanation of unusual switches, see: https://askubuntu.com/questions/258190/how-to-make-apt-get-install-less-noisy
-          # -q: quiet, -y: assume yes, --no-install-recommends: skip unnecessary packages.
-          DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends --quiet --yes -o=Dpkg::Use-Pty=0 ${{inputs.packages}}
+          # For explanation of unusual switches, see: https://askubuntu.com/questions/258190 how-to-make-apt-get-install-less-noisy
+          DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --quiet --yes -o=Dpkg::Use-Pty=0  install ${{inputs.packages}}
         elif [ -x "$(command -v apk)" ]; then
           # Alpine package manager.
           apk update
@@ -39,8 +38,7 @@ runs:
           currentVersion="$(tdnf --version)"
           requiredVesion="3.5.0"
           # Explanation of if statement: https://unix.stackexchange.com/questions/285924/how-to-compare-a-programs-version-in-a-shell-script
-          # If tdnf's version is not supported, but it is supported as a fork, fallback to dnf.
-          if [ "$(printf '%s/n' "$requiredVersion" | sort -V | head -n1)" = "$requiredVersion" ]; then
+          if [ "$(printf '%s\n' "$requiredVersion" | sort -V | head -n1)" = "$requiredVersion" ]; then
             # --nodocs argumentis not supported, but it is supported as aflag
             tdnf --setopt=tsflags=nodocs --assumeyes install -y ${inputs.packages}
           else
