@@ -1,0 +1,15 @@
+name: Clean Workspace
+description: Removes files stored in the root of your self-hosted shared workspace. Must be run at the end of each job until self-hosted runners can clean themselves up.
+author: ERuslan Bahna
+branding:
+  icon: trash-2
+  color: white
+runs:
+  using: "composite"
+  steps:
+    - run: |
+        ls -ltra
+        echo "Cleaning workspace & hidden files/folders"
+        rm -rf ../.[!.]* ../..?*
+        ls -ltra
+      shell: bash
