@@ -26,13 +26,14 @@ runs:
     - run: |
         if [ -x "$(command -v apt-get)" ]; then
           # Ubuntu and Debian package manager. Replaced dpkg as default.
+          apt-get update
           # For explanation of unusual switches, see https://askubuntu.com/questions/258190/how-to-make-apt-get-install-less-noisy
           # Otherwise, apt-get clogs up the logs
-          DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --quiet --yes -o=Dpkg::Use-Pty=0 install coreutils build-essentials
+          DEBIAN_FRONTEND=noninteractive apt-get --no-install-recommends --quiet --yes -o=Dpkg::Use-Pty=0 install ${{inputs.packages}}
         elif [ -x "$(command -v apk)" ]; then
           # Alpine package manager.
           apk update
-          apk add coreutils build-essentials
+          apk add ${{inputs.packages}}
         elif [ -x "$(command -v tdnf)" ]; then
           # CBL-Mariner and Photon package manager. Stripped down version of dnf.
           currentVersion="$(tdnf --version)"
@@ -40,19 +41,19 @@ runs:
           # Explanation of if statement: https://unix.stackexchange.com/questions/285924/how-to-compare-a-programs-version-in-a-shell-script
           if [ "$(printf '%s\n' "$requiredVersion" "$currentVersion" | sort -V | head -n1)" = "$requiredVersion" ]; then
           # --nodocs argument is not supported, but it is supported as a flag
-            tdnf --setopt=tsflags=nodocs --assumeyes install coreutils build-essentials
+            tdnf --setopt=tsflags=nodocs --assumeyes install ${{inputs.packages}}
           else
-            tdnf --assumeyes install coreutils build-essential
+            tdnf --assumeyes install ${{inputs.packages}}
           fi
         elif [ -x "$(command -v microdnf)" ]; then
           # RHEL minimal package manager. Stripped down version of dnf.
-          microdnf --setopt=install_weak_deps=0 --nodocs --assumeyes install coreutils build-essentials
+          microdnf --setopt=install_weak_deps=0 --nodocs --assumeyes install ${{inputs.packages}}
         elif [ -x "$(command -v dnf)" ]; then
           # RHEL and Fedora package manager. Replaced yum and rpm as default.
-          dnf --setopt=install_weak_deps=false --nodocs --assumeyes install coreutils build-essentials
+          dnf --setopt=install_weak_deps=false --nodocs --assumeyes install ${{inputs.packages}}
         elif [ -x "$(command -v rpm)" ]; then
           # Fallback package manager. Superseded by more modern package managers.
-          rpm --install --excludedocs coreutils build-essentials
+          rpm --install --excludedocs ${{inputs.packages}}
         else
           echo "This distro's package manager is not currently supported"
           exit 1
